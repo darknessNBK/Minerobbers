@@ -1,0 +1,10 @@
+name: Minerobbers
+version: '${project.version}'
+main: me.lighty.minerobbers.MinerobbersPlugin
+api-version: 1.19
+depend: [ProtocolLib]
+authors: [ Lighty ]
+description: Minecraft Cops & Robbers Gamemode
+commands:
+  minerobbers:
+    usage: /minerobbers
