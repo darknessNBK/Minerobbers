@@ -1,6 +1,8 @@
 package me.lighty.minerobbers.utils;
 
+import com.github.unldenis.hologram.Hologram;
 import me.lighty.minerobbers.MinerobbersPlugin;
+import me.lighty.minerobbers.objects.ATM;
 import me.lighty.minerobbers.objects.Store;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -13,6 +15,7 @@ import java.lang.String;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 public class Methods {
     public static String chatColor(String message) {
@@ -54,10 +57,28 @@ public class Methods {
         return false;
     }
 
+    public static boolean doesATMExist(int atmID) {
+        for (ATM atm : MinerobbersPlugin.getAtms()) {
+            if (atm.getID() == atmID) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static Store getStore(Integer storeID) {
         for (Store store : MinerobbersPlugin.getStores()) {
             if (store.getStoreID() == storeID) {
                 return store;
+            }
+        }
+        return null;
+    }
+
+    public static ATM getATM(Integer atmID) {
+        for (ATM atm : MinerobbersPlugin.getAtms()) {
+            if (atm.getID() == atmID) {
+                return atm;
             }
         }
         return null;
@@ -71,10 +92,19 @@ public class Methods {
         return id;
     }
 
+    public static int findPerfectATMID() {
+        int id = 0;
+        while (doesATMExist(id)) {
+            id++;
+        }
+        return id;
+    }
+
     public static void loadAllStoresFromConfig() {
-        int storeSize = MinerobbersPlugin.getStoresJson().getAll("stores").size();
+        int storeSize = 100;
+
         for (int i = 0; i < storeSize + 1; i++) {
-           if(MinerobbersPlugin.getStoresJson().contains("stores." + i + ".owner")) {
+           if(MinerobbersPlugin.getStoresJson().get("stores." + i) != null) {
                Location location = stringToLocation(MinerobbersPlugin.getStoresJson().getString("stores." + i + ".location"));
                String name = MinerobbersPlugin.getStoresJson().getString("stores." + i + ".name");
 
@@ -89,6 +119,21 @@ public class Methods {
                Store store = new Store(i, owner, location, name, price, minimumRobPrice, maximumRobPrice, lastRobbed, lastRobber);
                store.saveStore();
            }
+        }
+    }
+
+    public static void loadAllATMsFromConfig() {
+        int atmSize = 100;
+        for (int i = 0; i < atmSize + 1; i++) {
+            if(MinerobbersPlugin.getAtmsJson().get("atms." + i) != null) {
+                int atmID = MinerobbersPlugin.getAtmsJson().getInt("atms." + i + ".id");
+                int atmLastRobbed = MinerobbersPlugin.getAtmsJson().getInt("atms." + i + ".lastRobbed");
+                UUID atmLastRobber = UUID.fromString(MinerobbersPlugin.getAtmsJson().getString("atms." + i + ".lastRobber"));
+                Location atmLocation = stringToLocation(MinerobbersPlugin.getAtmsJson().getString("atms." + i + ".location"));
+
+                ATM atm = new ATM(atmID, atmLocation, atmLastRobber, atmLastRobbed);
+                atm.saveATM();
+            }
         }
     }
 
@@ -131,9 +176,16 @@ public class Methods {
         }
     }
 
-    public static void createHolograms() {
-        for (Store store : MinerobbersPlugin.getStores()) {
-            store.createHologram();
+    public static int getUnixTime() {
+        return (int) (System.currentTimeMillis() / 1000L);
+    }
+
+    public static ATM getAtmByHologram(Hologram hologram) {
+        for (ATM atm : MinerobbersPlugin.getAtms()) {
+            if (atm.getHologram().equals(hologram)) {
+                return atm;
+            }
         }
+        return null;
     }
 }

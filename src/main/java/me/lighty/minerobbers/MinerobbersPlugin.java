@@ -7,6 +7,7 @@ import me.lighty.minerobbers.commands.MinerobbersCmd;
 import me.lighty.minerobbers.guis.EditStoreGUI;
 import me.lighty.minerobbers.handlers.ChatHandler;
 import me.lighty.minerobbers.listeners.ChatListener;
+import me.lighty.minerobbers.objects.ATM;
 import me.lighty.minerobbers.objects.Store;
 import me.lighty.minerobbers.utils.Methods;
 import org.bukkit.Bukkit;
@@ -22,8 +23,10 @@ public final class MinerobbersPlugin extends JavaPlugin {
     @Getter private static MinerobbersPlugin instance;
     @Getter private static HologramPool hologramPool;
     @Getter private static ArrayList<Store> stores = new ArrayList<>();
+    @Getter private static ArrayList<ATM> atms = new ArrayList<>();
     @Getter private static HashMap<Player, ChatHandler> chatHandlers = new HashMap<>();
     @Getter private static Json storesJson;
+    @Getter private static Json atmsJson;
     @Getter private static Json playerDataJson;
 
     @Override
@@ -33,8 +36,10 @@ public final class MinerobbersPlugin extends JavaPlugin {
         hologramPool = new HologramPool(this, 15, 5f, 0.5f);
         storesJson = new Json(new File("plugins/Minerobbers/data/stores.json"));
         playerDataJson = new Json(new File("plugins/Minerobbers/data/playerdata.json"));
+        atmsJson = new Json(new File("plugins/Minerobbers/data/atms.json"));
 
         Methods.loadAllStoresFromConfig();
+        Methods.loadAllATMsFromConfig();
 
         getCommand("minerobbers").setExecutor(new MinerobbersCmd());
         getServer().getPluginManager().registerEvents(new ChatListener(), this);
@@ -46,14 +51,22 @@ public final class MinerobbersPlugin extends JavaPlugin {
         for(Store store : stores) {
             store.deleteHologram();
         }
+        for(ATM atm : atms) {
+            atm.deleteHologram();
+        }
     }
 
     public void reload() {
         storesJson = new Json(new File("plugins/Minerobbers/data/stores.json"));
         playerDataJson = new Json(new File("plugins/Minerobbers/data/playerdata.json"));
+        atmsJson = new Json(new File("plugins/Minerobbers/data/atms.json"));
         for(Store store : stores) {
             store.deleteHologram();
         }
+        for(ATM atm : atms) {
+            atm.deleteHologram();
+        }
         Methods.loadAllStoresFromConfig();
+        Methods.loadAllATMsFromConfig();
     }
 }

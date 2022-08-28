@@ -2,17 +2,14 @@ package me.lighty.minerobbers.objects;
 
 import com.github.unldenis.hologram.Hologram;
 import com.github.unldenis.hologram.animation.Animation;
-import com.github.unldenis.hologram.line.ItemLine;
 import de.leonhard.storage.Json;
 import lombok.Getter;
 import lombok.Setter;
 import me.lighty.minerobbers.MinerobbersPlugin;
 import me.lighty.minerobbers.utils.Methods;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.UUID;
 
@@ -83,4 +80,5 @@ public class Store {
             MinerobbersPlugin.getHologramPool().remove(this.hologram);
         }
     }
+
 }

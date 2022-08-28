@@ -2,6 +2,7 @@ package me.lighty.minerobbers.commands;
 
 import me.lighty.minerobbers.MinerobbersPlugin;
 import me.lighty.minerobbers.guis.EditStoreGUI;
+import me.lighty.minerobbers.objects.ATM;
 import me.lighty.minerobbers.objects.Store;
 import me.lighty.minerobbers.utils.Methods;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -15,6 +16,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class MinerobbersCmd implements CommandExecutor {
     @Override
@@ -236,6 +238,104 @@ public class MinerobbersCmd implements CommandExecutor {
                 }
             }
         }
+
+        if (args[0].equalsIgnoreCase("atm")) {
+            if(args.length < 2) {
+                sender.sendMessage("§c/minerobbers atm <create/delete/tp>");
+                return true;
+            }
+
+            if(args[1].equalsIgnoreCase("create")) {
+                if(!(sender instanceof Player)) {
+                    sender.sendMessage("§cYou must be a player to do this!");
+                    return true;
+                }
+
+                Player player = (Player) sender;
+
+                if(!player.hasPermission("minerobbers.atm.create")) {
+                    sender.sendMessage("§cYou do not have permission to do this!");
+                    return true;
+                }
+
+                int perfectID = Methods.findPerfectATMID();
+                new ATM(perfectID, player.getLocation(), UUID.fromString(Methods.nullUUID()), 0);
+                player.sendMessage("§aSuccessfully created ATM with ID " + perfectID + "!");
+                return true;
+            }
+
+            if(args[1].equalsIgnoreCase("delete")) {
+                if(!(sender instanceof Player)) {
+                    sender.sendMessage("§cYou must be a player to do this!");
+                    return true;
+                }
+
+                Player player = (Player) sender;
+
+                if(!player.hasPermission("minerobbers.atm.delete")) {
+                    sender.sendMessage("§cYou do not have permission to do this!");
+                    return true;
+                }
+
+                if(args.length < 3) {
+                    sender.sendMessage("§c/minerobbers atm delete <atmID>");
+                    return true;
+                }
+
+                if(!Methods.isInt(args[2])) {
+                    sender.sendMessage("§cInvalid ATM ID!");
+                    return true;
+                }
+
+                int atmID = Integer.parseInt(args[2]);
+                if(!Methods.doesATMExist(atmID)) {
+                    sender.sendMessage("§cATM with ID " + atmID + " does not exist!");
+                    return true;
+                }
+
+                ATM atm = Methods.getATM(atmID);
+                atm.delete();
+                sender.sendMessage("§aSuccessfully deleted ATM with ID " + atmID + "!");
+                return true;
+            }
+
+            if(args[1].equalsIgnoreCase("tp")) {
+                if(!(sender instanceof Player)) {
+                    sender.sendMessage("§cYou must be a player to do this!");
+                    return true;
+                }
+
+                Player player = (Player) sender;
+
+                if(!player.hasPermission("minerobbers.atm.tp")) {
+                    sender.sendMessage("§cYou do not have permission to do this!");
+                    return true;
+                }
+
+                if(args.length < 3) {
+                    sender.sendMessage("§c/minerobbers atm tp <atmID>");
+                    return true;
+                }
+
+                if(!Methods.isInt(args[2])) {
+                    sender.sendMessage("§cInvalid ATM ID!");
+                    return true;
+                }
+
+                int atmID = Integer.parseInt(args[2]);
+                if(!Methods.doesATMExist(atmID)) {
+                    sender.sendMessage("§cATM with ID " + atmID + " does not exist!");
+                    return true;
+                }
+
+                ATM atm = Methods.getATM(atmID);
+                player.teleport(atm.getLocation());
+                sender.sendMessage("§aSuccessfully teleported to ATM with ID " + atmID + "!");
+                return true;
+            }
+
+        }
+
         return false;
     }
 
