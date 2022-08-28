@@ -240,6 +240,11 @@ public class MinerobbersCmd implements CommandExecutor {
         }
 
         if (args[0].equalsIgnoreCase("atm")) {
+            if(!sender.hasPermission("minerobbers.atm")) {
+                sender.sendMessage("§cYou do not have permission to do this!");
+                return true;
+            }
+
             if(args.length < 2) {
                 sender.sendMessage("§c/minerobbers atm <create/delete/tp>");
                 return true;
@@ -331,6 +336,42 @@ public class MinerobbersCmd implements CommandExecutor {
                 ATM atm = Methods.getATM(atmID);
                 player.teleport(atm.getLocation());
                 sender.sendMessage("§aSuccessfully teleported to ATM with ID " + atmID + "!");
+                return true;
+            }
+
+            if(args[1].equalsIgnoreCase("rob")) {
+                if(!(sender instanceof Player)) {
+                    sender.sendMessage("§cYou must be a player to do this!");
+                    return true;
+                }
+
+                Player player = (Player) sender;
+
+                if(!player.hasPermission("minerobbers.atm.rob")) {
+                    sender.sendMessage("§cYou do not have permission to do this!");
+                    return true;
+                }
+
+                ATM atm = Methods.getNearestATM(player.getLocation());
+                if(atm == null) {
+                    sender.sendMessage("§cThere is no ATM nearby!");
+                    return true;
+                }
+
+                if(atm.getLocation().distance(player.getLocation()) > 3) {
+                    sender.sendMessage("§cYou are too far away from the ATM!");
+                    return true;
+                }
+
+                if(!atm.canRob()) {
+                    sender.sendMessage("§cATM with ID " + atm.getID() + " is already robbed!");
+                    return true;
+                }
+
+                atm.robATM(player);
+                sender.sendMessage("§aSuccessfully robbed ATM with ID " + atm.getID() + "!");
+                int money = Methods.getRandomIntFromRange(750, 1500);
+                Methods.giveMoneyOverTime(player, money, 15, atm.getLocation());
                 return true;
             }
 

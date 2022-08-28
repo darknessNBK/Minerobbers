@@ -1,9 +1,9 @@
 package me.lighty.minerobbers.objects;
 
-import com.github.unldenis.hologram.AbstractLine;
 import com.github.unldenis.hologram.Hologram;
 import com.github.unldenis.hologram.TextLine;
 import com.github.unldenis.hologram.animation.Animation;
+import com.github.unldenis.hologram.line.ItemLine;
 import de.leonhard.storage.Json;
 import lombok.Getter;
 import me.lighty.minerobbers.MinerobbersPlugin;
@@ -54,23 +54,27 @@ public class ATM {
     }
 
     public void robATM(Player player) {
-        if(Methods.getUnixTime() - lastRobbery < 60) {
-            player.sendMessage("§cYou can't rob this ATM for another " + (60 - (Methods.getUnixTime() - lastRobbery)) + " seconds!");
+        if(Methods.getUnixTime() - lastRobbery < 180) {
+            player.sendMessage("§cYou can't rob this ATM for another " + (180 - (Methods.getUnixTime() - lastRobbery)) + " seconds!");
         } else {
             this.lastRobbery = Methods.getUnixTime();
             this.lastRobber = player.getUniqueId();
-            player.sendMessage("§aYou have robbed this ATM!");
+            saveATM();
         }
     }
 
     public void updateHologram() {
-        if(Methods.getUnixTime() - lastRobbery < 60) {
-            String text = "§cLast robbery: " + (60 - (Methods.getUnixTime() - lastRobbery)) + " seconds ago";
-            TextLine line = (TextLine) this.hologram.getLines().get(2);
+        if(Methods.getUnixTime() - lastRobbery < 180) {
+            String text = "§c§lLast robbed: §e" + Methods.secondsOrMinutes(((Methods.getUnixTime() - lastRobbery))) + " ago";
+            TextLine line = (TextLine) this.hologram.getLines().get(1);
+            ItemLine itemLine = (ItemLine) this.hologram.getLines().get(2);
+            itemLine.set(new ItemStack(Material.COAL_BLOCK));
             line.set(text);
         } else {
-            String text = "§aRight click to rob this ATM";
-            TextLine line = (TextLine) this.hologram.getLines().get(2);
+            String text = "§7§oRight click to rob this ATM";
+            ItemLine itemLine = (ItemLine) this.hologram.getLines().get(2);
+            itemLine.set(new ItemStack(Material.EMERALD_BLOCK));
+            TextLine line = (TextLine) this.hologram.getLines().get(1);
             line.set(text);
         }
 
@@ -79,19 +83,19 @@ public class ATM {
     public void createHologram() {
         deleteHologram();
         String robLine;
-        if(Methods.getUnixTime() - lastRobbery < 60) {
-            robLine = "§cLast robbed: §e" + (Methods.getUnixTime() - lastRobbery) + "§7 seconds ago";
+        if(Methods.getUnixTime() - lastRobbery < 180) {
+            robLine = "§c§lLast robbed: §e" + Methods.secondsOrMinutes(((Methods.getUnixTime() - lastRobbery))) + " ago";
         } else {
             robLine = "§aRight-click to rob this ATM";
         }
 
         this.hologram = Hologram.builder()
                 .location(this.location.clone().add(0, -0.5, 0))
-                .addLine("§aATM", true)
-                .addLine(new ItemStack(Material.EMERALD_BLOCK))
+                .addLine("§a§lATM", true)
                 .addLine(robLine, true)
+                .addLine(new ItemStack(Material.EMERALD_BLOCK))
                 .build(MinerobbersPlugin.getHologramPool());
-        this.hologram.getLines().get(1).setAnimation(Animation.AnimationType.CIRCLE);
+        this.hologram.getLines().get(2).setAnimation(Animation.AnimationType.CIRCLE);
     }
 
     public void deleteHologram() {
@@ -107,6 +111,6 @@ public class ATM {
     }
 
     public boolean canRob() {
-        return Methods.getUnixTime() - lastRobbery > 60;
+        return Methods.getUnixTime() - lastRobbery > 180;
     }
 }

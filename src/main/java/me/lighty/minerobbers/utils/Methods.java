@@ -10,12 +10,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.lang.String;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.lang.constant.Constable;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class Methods {
     public static String chatColor(String message) {
@@ -180,6 +182,18 @@ public class Methods {
         return (int) (System.currentTimeMillis() / 1000L);
     }
 
+    public static double secondsToMinutes(int seconds) {
+        return seconds / 60.0;
+    }
+
+    public static String secondsOrMinutes(int seconds) {
+        if (seconds > 60) {
+            return String.format("%.2f", secondsToMinutes(seconds)) + " minutes";
+        } else {
+            return seconds + " seconds";
+        }
+    }
+
     public static ATM getAtmByHologram(Hologram hologram) {
         for (ATM atm : MinerobbersPlugin.getAtms()) {
             if (atm.getHologram().equals(hologram)) {
@@ -187,5 +201,44 @@ public class Methods {
             }
         }
         return null;
+    }
+
+    public static ATM getNearestATM(Location loc) {
+        ATM nearestATM = null;
+        double nearestDistance = Double.MAX_VALUE;
+        for (ATM atm : MinerobbersPlugin.getAtms()) {
+            double distance = loc.distance(atm.getLocation());
+            if (distance < nearestDistance) {
+                nearestDistance = distance;
+                nearestATM = atm;
+            }
+        }
+        return nearestATM;
+    }
+
+    public static void giveMoneyOverTime(Player player, int money, int seconds, Location mustBeNear) {
+        int moneyPerSecond = money / seconds;
+        int startTime = getUnixTime();
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if(mustBeNear.distance(player.getLocation()) < 3) {
+                    int totalEarned = moneyPerSecond * (getUnixTime() - startTime);
+                    player.sendTitle(Methods.chatColor("&a&l+" + totalEarned + "&7&l$"), null, 0, 20, 0);
+                    // give money player here
+                    if(startTime + seconds < getUnixTime()) {
+                        player.sendTitle(Methods.chatColor("&aYou earned &a&l+" + money + "&7&l$ &ain total!"), null, 0, 40, 0);
+                        cancel();
+                    }
+                } else {
+                    player.sendTitle(Methods.chatColor("&c&lYou left the robbery area"), null, 0, 40, 0);
+                    cancel();
+                }
+            }
+        }.runTaskTimer(MinerobbersPlugin.getInstance(), 0, 20);
+    }
+
+    public static int getRandomIntFromRange(int min, int max) {
+        return (int) (Math.random() * ((max - min) + 1)) + min;
     }
 }
