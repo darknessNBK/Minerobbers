@@ -205,7 +205,7 @@ public class Methods {
 
     public static ATM getNearestATM(Location loc) {
         ATM nearestATM = null;
-        double nearestDistance = Double.MAX_VALUE;
+        double nearestDistance = 3;
         for (ATM atm : MinerobbersPlugin.getAtms()) {
             double distance = loc.distance(atm.getLocation());
             if (distance < nearestDistance) {
@@ -214,6 +214,19 @@ public class Methods {
             }
         }
         return nearestATM;
+    }
+
+    public static Store getNearestStore(Location loc) {
+        Store nearestStore = null;
+        double nearestDistance = 3;
+        for (Store store : MinerobbersPlugin.getStores()) {
+            double distance = loc.distance(store.storeLOCATION);
+            if (distance < nearestDistance) {
+                nearestDistance = distance;
+                nearestStore = store;
+            }
+        }
+        return nearestStore;
     }
 
     public static void giveMoneyOverTime(Player player, int money, int seconds, Location mustBeNear) {

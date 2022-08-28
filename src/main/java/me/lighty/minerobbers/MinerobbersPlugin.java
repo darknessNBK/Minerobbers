@@ -6,6 +6,7 @@ import lombok.Getter;
 import me.lighty.minerobbers.commands.MinerobbersCmd;
 import me.lighty.minerobbers.handlers.ChatHandler;
 import me.lighty.minerobbers.listeners.ChatListener;
+import me.lighty.minerobbers.listeners.IDSneakListener;
 import me.lighty.minerobbers.objects.ATM;
 import me.lighty.minerobbers.objects.Store;
 import me.lighty.minerobbers.utils.Methods;
@@ -41,6 +42,7 @@ public final class MinerobbersPlugin extends JavaPlugin {
 
         getCommand("minerobbers").setExecutor(new MinerobbersCmd());
         getServer().getPluginManager().registerEvents(new ChatListener(), this);
+        getServer().getPluginManager().registerEvents(new IDSneakListener(), this);
     }
 
     @Override
