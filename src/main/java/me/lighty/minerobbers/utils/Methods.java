@@ -194,15 +194,6 @@ public class Methods {
         }
     }
 
-    public static ATM getAtmByHologram(Hologram hologram) {
-        for (ATM atm : MinerobbersPlugin.getAtms()) {
-            if (atm.getHologram().equals(hologram)) {
-                return atm;
-            }
-        }
-        return null;
-    }
-
     public static ATM getNearestATM(Location loc) {
         ATM nearestATM = null;
         double nearestDistance = 3;

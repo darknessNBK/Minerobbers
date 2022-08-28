@@ -4,6 +4,7 @@ import com.github.unldenis.hologram.HologramPool;
 import de.leonhard.storage.Json;
 import lombok.Getter;
 import me.lighty.minerobbers.commands.MinerobbersCmd;
+import me.lighty.minerobbers.commands.RobberyCmd;
 import me.lighty.minerobbers.handlers.ChatHandler;
 import me.lighty.minerobbers.listeners.ChatListener;
 import me.lighty.minerobbers.listeners.IDSneakListener;
@@ -41,6 +42,7 @@ public final class MinerobbersPlugin extends JavaPlugin {
         Methods.loadAllATMsFromConfig();
 
         getCommand("minerobbers").setExecutor(new MinerobbersCmd());
+        getCommand("robbery").setExecutor(new RobberyCmd());
         getServer().getPluginManager().registerEvents(new ChatListener(), this);
         getServer().getPluginManager().registerEvents(new IDSneakListener(), this);
     }

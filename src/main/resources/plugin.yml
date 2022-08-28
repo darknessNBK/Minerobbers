@@ -7,4 +7,8 @@ authors: [ Lighty ]
 description: Minecraft Cops & Robbers Gamemode
 commands:
   minerobbers:
-    usage: /minerobbers
+    permission: minerobbers.command.minerobbers
+    description: All commands for the Minerobbers gamemode.
+  robbery:
+    description: Start a robbery on an ATM or a store.
+    permission: minerobbers.command.robbery

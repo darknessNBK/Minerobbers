@@ -60,6 +60,10 @@ public class ATM {
             this.lastRobbery = Methods.getUnixTime();
             this.lastRobber = player.getUniqueId();
             saveATM();
+
+            int money = Methods.getRandomIntFromRange(750, 1500);
+            Methods.giveMoneyOverTime(player, money, 15, this.location);
+            player.sendMessage(Methods.chatColor("&aYou started to rob this ATM!"));
         }
     }
 
@@ -90,7 +94,7 @@ public class ATM {
         }
 
         this.hologram = Hologram.builder()
-                .location(this.location.clone().add(0, -0.5, 0))
+                .location(this.location.clone().add(0, -1.2, 0))
                 .addLine("§a§lATM", true)
                 .addLine(robLine, true)
                 .addLine(new ItemStack(Material.EMERALD_BLOCK))

@@ -237,6 +237,29 @@ public class MinerobbersCmd implements CommandExecutor {
                     return true;
                 }
             }
+
+            if(args[1].equalsIgnoreCase("rob")) {
+                if(!(sender instanceof Player)) {
+                    sender.sendMessage("§cYou must be a player to do this!");
+                    return true;
+                }
+
+                Player player = (Player) sender;
+
+                if(!player.hasPermission("minerobbers.store.rob")) {
+                    sender.sendMessage("§cYou do not have permission to do this!");
+                    return true;
+                }
+
+                Store store = Methods.getNearestStore(player.getLocation());
+                if(store == null) {
+                    sender.sendMessage("§cThere are no stores nearby!");
+                    return true;
+                }
+
+                store.rob(player);
+                return true;
+            }
         }
 
         if (args[0].equalsIgnoreCase("atm")) {
@@ -369,9 +392,6 @@ public class MinerobbersCmd implements CommandExecutor {
                 }
 
                 atm.robATM(player);
-                sender.sendMessage("§aSuccessfully robbed ATM with ID " + atm.getID() + "!");
-                int money = Methods.getRandomIntFromRange(750, 1500);
-                Methods.giveMoneyOverTime(player, money, 15, atm.getLocation());
                 return true;
             }
 
