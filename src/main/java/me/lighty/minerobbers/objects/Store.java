@@ -45,7 +45,6 @@ public class Store {
         storeMINIMUMROBPRICE = minimumRobPrice;
         storeMAXIMUMROBPRICE = maximumRobPrice;
 
-        MinerobbersPlugin.getStores().add(this);
         createHologram();
 
         new BukkitRunnable() {
@@ -58,6 +57,9 @@ public class Store {
                 updateHologram();
             }
         }.runTaskTimer(MinerobbersPlugin.getInstance(), 0, 20);
+
+        MinerobbersPlugin.getStores().add(this);
+        saveStore();
     }
 
     public void rob(Player player) {
@@ -71,6 +73,7 @@ public class Store {
             int money = Methods.getRandomIntFromRange(storeMINIMUMROBPRICE, storeMAXIMUMROBPRICE);
             Methods.giveMoneyOverTime(player, money, 25, storeLOCATION);
             player.sendMessage("§aYou started to rob this store!");
+            saveStore();
         }
     }
 

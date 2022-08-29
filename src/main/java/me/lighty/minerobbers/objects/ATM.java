@@ -8,6 +8,7 @@ import de.leonhard.storage.Json;
 import lombok.Getter;
 import me.lighty.minerobbers.MinerobbersPlugin;
 import me.lighty.minerobbers.utils.Methods;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -30,9 +31,6 @@ public class ATM {
         this.lastRobber = robber;
         this.lastRobbery = robberyTime;
 
-        MinerobbersPlugin.getAtms().add(this);
-        createHologram();
-
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -43,13 +41,17 @@ public class ATM {
                 updateHologram();
             }
         }.runTaskTimer(MinerobbersPlugin.getInstance(), 0, 20);
+
+        Bukkit.getLogger().info("Creating ATM with ID " + id);
+        MinerobbersPlugin.getAtms().add(this);
+        createHologram();
     }
 
     public void saveATM() {
         Json atmsJson = MinerobbersPlugin.getAtmsJson();
-        atmsJson.set("atms." + ID + ".location", Methods.locationToString(location));
-        atmsJson.set("atms." + ID + ".lastRobbery", lastRobbery);
-        atmsJson.set("atms." + ID + ".lastRobber", lastRobber.toString());
+        atmsJson.set("atms." + this.ID + ".location", Methods.locationToString(location));
+        atmsJson.set("atms." + this.ID + ".lastRobbery", lastRobbery);
+        atmsJson.set("atms." + this.ID + ".lastRobber", lastRobber.toString());
         createHologram();
     }
 
@@ -59,11 +61,13 @@ public class ATM {
         } else {
             this.lastRobbery = Methods.getUnixTime();
             this.lastRobber = player.getUniqueId();
+            updateHologram();
             saveATM();
 
             int money = Methods.getRandomIntFromRange(750, 1500);
             Methods.giveMoneyOverTime(player, money, 15, this.location);
             player.sendMessage(Methods.chatColor("&aYou started to rob this ATM!"));
+
         }
     }
 
@@ -75,7 +79,7 @@ public class ATM {
             itemLine.set(new ItemStack(Material.COAL_BLOCK));
             line.set(text);
         } else {
-            String text = "§7§oRight click to rob this ATM";
+            String text = Methods.chatColor("&7&oType /robbery to rob this ATM.");
             ItemLine itemLine = (ItemLine) this.hologram.getLines().get(2);
             itemLine.set(new ItemStack(Material.EMERALD_BLOCK));
             TextLine line = (TextLine) this.hologram.getLines().get(1);
@@ -90,7 +94,7 @@ public class ATM {
         if(Methods.getUnixTime() - lastRobbery < 180) {
             robLine = "§c§lLast robbed: §e" + Methods.secondsOrMinutes(((Methods.getUnixTime() - lastRobbery))) + " ago";
         } else {
-            robLine = "§aRight-click to rob this ATM";
+            robLine = Methods.chatColor("&7&oType /robbery to rob this ATM.");
         }
 
         this.hologram = Hologram.builder()

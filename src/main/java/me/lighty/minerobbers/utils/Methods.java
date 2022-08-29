@@ -103,13 +103,13 @@ public class Methods {
     }
 
     public static void loadAllStoresFromConfig() {
-        int storeSize = 100;
+        int storeSize = MinerobbersPlugin.getStoresJson().getMap("stores").size();
 
         for (int i = 0; i < storeSize + 1; i++) {
            if(MinerobbersPlugin.getStoresJson().get("stores." + i) != null) {
                Location location = stringToLocation(MinerobbersPlugin.getStoresJson().getString("stores." + i + ".location"));
-               String name = MinerobbersPlugin.getStoresJson().getString("stores." + i + ".name");
 
+               String name = MinerobbersPlugin.getStoresJson().getString("stores." + i + ".name");
                String owner = MinerobbersPlugin.getStoresJson().getString("stores." + i + ".owner");
                String lastRobber = MinerobbersPlugin.getStoresJson().getString("stores." + i + ".lastRobber");
 
@@ -118,23 +118,23 @@ public class Methods {
                int maximumRobPrice = MinerobbersPlugin.getStoresJson().getInt("stores." + i + ".maximumRobPrice");
                int lastRobbed = MinerobbersPlugin.getStoresJson().getInt("stores." + i + ".lastRobbed");
 
-               Store store = new Store(i, owner, location, name, price, minimumRobPrice, maximumRobPrice, lastRobbed, lastRobber);
-               store.saveStore();
+               new Store(i, owner, location, name, price, minimumRobPrice, maximumRobPrice, lastRobbed, lastRobber);
            }
         }
     }
 
     public static void loadAllATMsFromConfig() {
-        int atmSize = 100;
+        int atmSize = MinerobbersPlugin.getAtmsJson().getMap("atms").size();
+        Bukkit.getLogger().info(atmSize + "");
         for (int i = 0; i < atmSize + 1; i++) {
             if(MinerobbersPlugin.getAtmsJson().get("atms." + i) != null) {
+                Bukkit.getLogger().info("Loading ATMsss " + i);
                 int atmID = MinerobbersPlugin.getAtmsJson().getInt("atms." + i + ".id");
                 int atmLastRobbed = MinerobbersPlugin.getAtmsJson().getInt("atms." + i + ".lastRobbed");
                 UUID atmLastRobber = UUID.fromString(MinerobbersPlugin.getAtmsJson().getString("atms." + i + ".lastRobber"));
                 Location atmLocation = stringToLocation(MinerobbersPlugin.getAtmsJson().getString("atms." + i + ".location"));
 
-                ATM atm = new ATM(atmID, atmLocation, atmLastRobber, atmLastRobbed);
-                atm.saveATM();
+                new ATM(atmID, atmLocation, atmLastRobber, atmLastRobbed);
             }
         }
     }

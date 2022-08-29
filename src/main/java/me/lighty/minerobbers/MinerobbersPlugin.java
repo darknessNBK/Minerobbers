@@ -50,12 +50,6 @@ public final class MinerobbersPlugin extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
-        for(Store store : stores) {
-            store.deleteHologram();
-        }
-        for(ATM atm : atms) {
-            atm.deleteHologram();
-        }
     }
 
     public void reload() {
